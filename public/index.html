@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  <!-- Formulario para Clientes -->
+  <section id="clientes-section">
+    <h2>Crear Cliente</h2>
+    <form id="cliente-form">
+      <input type="text" id="cliente-nombre" placeholder="Nombre" required />
+      <input type="email" id="cliente-email" placeholder="Email" required />
+      <input type="text" id="cliente-telefono" placeholder="Teléfono" required />
+      <input type="text" id="cliente-direccion" placeholder="Dirección" required />
+      <button type="submit">Crear Cliente</button>
+    </form>
+    <h3>Listado de Clientes</h3>
+    <table id="clientes-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Dirección</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Formulario para Items -->
+  <section id="items-section">
+    <h2>Crear Item</h2>
+    <form id="item-form">
+      <input type="text" id="item-codigo" placeholder="Código" required />
+      <input type="text" id="item-descripcion" placeholder="Descripción" required />
+      <input type="number" id="item-precio" placeholder="Precio" required />
+      <input type="number" id="item-stock" placeholder="Stock" required />
+      <label>
+        <input type="checkbox" id="item-habilitado" />
+        Habilitado
+      </label>
+      <button type="submit">Crear Item</button>
+    </form>
+    <h3>Listado de Items</h3>
+    <table id="items-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Habilitado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Formulario para Pedidos -->
+  <section id="pedidos-section">
+    <h2>Crear Pedido</h2>
+    <form id="pedido-form">
+      <input type="number" id="pedido-cliente-id" placeholder="Cliente ID" required />
+      <input type="date" id="pedido-fecha" required />
+      <textarea id="pedido-items" placeholder="Items en formato JSON [{ itemId: 1, cantidad: 2 }, ...]" required></textarea>
+      <button type="submit">Crear Pedido</button>
+    </form>
+    <h3>Listado de Pedidos</h3>
+    <table id="pedidos-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente ID</th>
+          <th>Fecha</th>
+          <th>Items</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script src="index.js"></script>
+</body>
+</html>
