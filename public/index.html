@@ -11,15 +11,21 @@
 
   <!-- Formulario para Clientes -->
   <section id="clientes-section">
-    <h2>Crear Cliente</h2>
+    <h2>Clientes</h2>
+  
+    <!-- Formulario para agregar cliente -->
     <form id="cliente-form">
       <input type="text" id="cliente-nombre" placeholder="Nombre" required />
       <input type="email" id="cliente-email" placeholder="Email" required />
-      <input type="text" id="cliente-telefono" placeholder="Teléfono" required />
+      <input type="tel" id="cliente-telefono" placeholder="Teléfono" required />
       <input type="text" id="cliente-direccion" placeholder="Dirección" required />
-      <button type="submit">Crear Cliente</button>
+      <button type="submit">Agregar Cliente</button>
     </form>
-    <h3>Listado de Clientes</h3>
+  
+    <!-- Campo de búsqueda de cliente -->
+    <input type="text" id="buscar-cliente" placeholder="Buscar cliente por nombre o ID" />
+  
+    <!-- Tabla de clientes -->
     <table id="clientes-table">
       <thead>
         <tr>
@@ -28,27 +34,36 @@
           <th>Email</th>
           <th>Teléfono</th>
           <th>Dirección</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </section>
+  
+  
 
   <!-- Formulario para Items -->
   <section id="items-section">
-    <h2>Crear Item</h2>
+    <h2>Items</h2>
+  
+    <!-- Formulario para agregar item -->
     <form id="item-form">
       <input type="text" id="item-codigo" placeholder="Código" required />
       <input type="text" id="item-descripcion" placeholder="Descripción" required />
       <input type="number" id="item-precio" placeholder="Precio" required />
       <input type="number" id="item-stock" placeholder="Stock" required />
       <label>
-        <input type="checkbox" id="item-habilitado" />
         Habilitado
+        <input type="checkbox" id="item-habilitado" />
       </label>
-      <button type="submit">Crear Item</button>
+      <button type="submit">Agregar Item</button>
     </form>
-    <h3>Listado de Items</h3>
+  
+    <!-- Campo de búsqueda de item -->
+    <input type="text" id="buscar-item" placeholder="Buscar item por código o descripción" />
+  
+    <!-- Tabla de items -->
     <table id="items-table">
       <thead>
         <tr>
@@ -58,21 +73,40 @@
           <th>Precio</th>
           <th>Stock</th>
           <th>Habilitado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </section>
+  
 
   <!-- Formulario para Pedidos -->
   <section id="pedidos-section">
     <h2>Crear Pedido</h2>
+  
+    <!-- Formulario para crear pedido -->
     <form id="pedido-form">
       <input type="number" id="pedido-cliente-id" placeholder="Cliente ID" required />
       <input type="date" id="pedido-fecha" required />
-      <textarea id="pedido-items" placeholder="Items en formato JSON [{ itemId: 1, cantidad: 2 }, ...]" required></textarea>
+      
+      <div id="pedido-items-container">
+        <!-- Sección para agregar items con ID y cantidad -->
+        <div class="pedido-item">
+          <input type="number" class="item-id" placeholder="Item ID" required />
+          <input type="number" class="item-cantidad" placeholder="Cantidad" required />
+        </div>
+      </div>
+      
+      <!-- Botón para agregar más items al pedido -->
+      <button type="button" id="add-item">Agregar otro item</button>
       <button type="submit">Crear Pedido</button>
     </form>
+  
+    <!-- Campo de búsqueda de pedido -->
+    <input type="text" id="buscar-pedido" placeholder="Buscar pedido por cliente ID o pedido ID" />
+  
+    <!-- Tabla de pedidos -->
     <h3>Listado de Pedidos</h3>
     <table id="pedidos-table">
       <thead>
@@ -86,7 +120,11 @@
       <tbody></tbody>
     </table>
   </section>
+  
 
-  <script src="index.js"></script>
+  <script src="js/clientess.js"></script>
+  <script src="js/items.js"></script>
+  <script src="js/pedidos.js"></script>
+ 
 </body>
 </html>
