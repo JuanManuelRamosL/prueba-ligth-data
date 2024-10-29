@@ -6,14 +6,14 @@ const Item = require('../models/itemModel');
 exports.createPedido = (req, res) => {
   const { clienteId, fecha, items } = req.body;
 
-  // Validación de campos requeridos
+/*   // Validación de campos requeridos
   if (!clienteId || !fecha || !items || !Array.isArray(items)) {
     return res.status(400).json({ error: 'Todos los campos (clienteId, fecha, items) son requeridos y items debe ser una lista' });
   }
 
   if (items.length === 0) {
     return res.status(400).json({ error: 'El array items no puede estar vacío' });
-  }
+  } */
 
   // Verificar existencia del cliente en la base de datos
   const cliente = Cliente.getById(clienteId); // Cambia esto según la lógica de obtención de clientes en tu base de datos
@@ -22,10 +22,18 @@ exports.createPedido = (req, res) => {
   }
 
   // Verificar que cada item exista en la base de datos
-  for (const item of items) {
-    const itemData = Item.getById(item.itemId); // Cambia esto según la lógica de obtención de items en tu base de datos
-    if (!itemData) {
-      return res.status(400).json({ error: `El item con ID ${item.itemId} no existe` });
+  for (const itemPedido of items) {
+    const item = Item.getById(itemPedido.itemId);
+    if (!item) {
+      return res.status(404).json({ error: `Item con ID ${itemPedido.itemId} no encontrado` });
+    }
+
+    if (!item.habilitado) {
+      return res.status(400).json({ error: `El item con ID ${itemPedido.itemId} no está habilitado y no puede ser agregado al pedido.` });
+    }
+
+    if (item.stock < itemPedido.cantidad) {
+      return res.status(400).json({ error: `Stock insuficiente para el item ID ${itemPedido.itemId}. Stock disponible: ${item.stock}` });
     }
   }
 

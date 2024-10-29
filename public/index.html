@@ -39,6 +39,19 @@
       </thead>
       <tbody></tbody>
     </table>
+    <!-- Modal para editar cliente -->
+<div id="modal-editar-cliente" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2>Editar Cliente</h2>
+    <input type="text" id="modal-cliente-nombre" placeholder="Nombre" required />
+    <input type="email" id="modal-cliente-email" placeholder="Email" required />
+    <input type="tel" id="modal-cliente-telefono" placeholder="Teléfono" required />
+    <input type="text" id="modal-cliente-direccion" placeholder="Dirección" required />
+    <button id="guardar-cambios">Guardar Cambios</button>
+  </div>
+</div>
+
   </section>
   
   
@@ -78,6 +91,23 @@
       </thead>
       <tbody></tbody>
     </table>
+    <!-- Modal para editar item -->
+<div id="modal-editar-item" class="modal2">
+  <div class="modal-content2">
+    <span class="close-button2">&times;</span>
+    <h2>Editar Item</h2>
+    <input type="text" id="modal-item-codigo" placeholder="Código" required />
+    <input type="text" id="modal-item-descripcion" placeholder="Descripción" required />
+    <input type="number" id="modal-item-precio" placeholder="Precio" required />
+    <input type="number" id="modal-item-stock" placeholder="Stock" required />
+    <label>
+      Habilitado
+      <input type="checkbox" id="modal-item-habilitado" />
+    </label>
+    <button id="guardar-cambios-item">Guardar Cambios</button>
+  </div>
+</div>
+
   </section>
   
 
@@ -102,7 +132,7 @@
       <button type="button" id="add-item">Agregar otro item</button>
       <button type="submit">Crear Pedido</button>
     </form>
-  
+    <p id="pedido-error" style="color: red; display: none;"></p>
     <!-- Campo de búsqueda de pedido -->
     <input type="text" id="buscar-pedido" placeholder="Buscar pedido por cliente ID o pedido ID" />
   

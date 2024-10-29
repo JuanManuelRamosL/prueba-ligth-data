@@ -2,12 +2,12 @@ const Item = require('../models/itemModel');
 
 // Crear un item
 exports.createItem = (req, res) => {
-  const { codigo, descripcion, precio, habilitado, stock } = req.body;
+/*   const { codigo, descripcion, precio, habilitado, stock } = req.body;
 
   // Validación de campos requeridos
   if (!codigo || !descripcion || precio == null || habilitado == null || stock == null) {
     return res.status(400).json({ error: 'Todos los campos (codigo, descripcion, precio, habilitado, stock) son requeridos' });
-  }
+  } */
 
   const newItem = Item.create(req.body);
   res.status(201).json(newItem);

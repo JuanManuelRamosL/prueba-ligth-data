@@ -16,9 +16,9 @@ exports.getClienteById = (req, res) => {
 exports.createCliente = (req, res) => {
   const { nombre, email, telefono, direccion } = req.body;
   // Validar si faltan campos requeridos
-  if (!nombre || !email || !telefono || !direccion) {
+/*   if (!nombre || !email || !telefono || !direccion) {
     return res.status(400).json({ error: 'Todos los campos (nombre, email, telefono, direccion) son requeridos' });
-  }
+  } */
   const nuevoCliente = Cliente.create(req.body);
   res.status(201).json(nuevoCliente);
 };

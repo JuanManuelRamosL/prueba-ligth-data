@@ -9,35 +9,46 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('pedido-items-container').appendChild(itemContainer);
     });
   
-    document.getElementById('pedido-form').addEventListener('submit', async (e) => {
+     // Función para enviar el formulario de pedido
+     document.getElementById('pedido-form').addEventListener('submit', async (e) => {
       e.preventDefault();
   
-      const clienteId = document.getElementById('pedido-cliente-id').value;
+      // Convierte clienteId a número
+      const clienteId = parseInt(document.getElementById('pedido-cliente-id').value, 10);
       const fecha = document.getElementById('pedido-fecha').value;
   
-      // Recopila items en un array
-      const items = Array.from(document.querySelectorAll('.pedido-item')).map(itemDiv => ({
-        itemId: parseInt(itemDiv.querySelector('.item-id').value),
-        cantidad: parseInt(itemDiv.querySelector('.item-cantidad').value)
-      }));
+      const items = Array.from(document.querySelectorAll('.pedido-item')).map(item => {
+          return {
+              itemId: parseInt(item.querySelector('.item-id').value, 10),
+              cantidad: parseInt(item.querySelector('.item-cantidad').value, 10),
+          };
+      });
   
       try {
-        const response = await fetch('http://localhost:3000/pedidos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clienteId, fecha, items })
-        });
+          console.log(JSON.stringify({ clienteId, fecha, items }));
+          const response = await fetch('http://localhost:3000/pedidos', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ clienteId, fecha, items })
+          });
   
-        if (response.ok) {
-          alert('Pedido creado con éxito');
-          cargarPedidos();
-        } else {
-          alert('Error al crear el pedido');
-        }
+          if (response.ok) {
+              const nuevoPedido = await response.json();
+              alert('Pedido creado con éxito');
+              // Recargar o actualizar la lista de pedidos
+              cargarPedidos();
+          } else {
+              const errorData = await response.json();
+              alert(`Error: ${errorData.error}`);
+          }
       } catch (error) {
-        console.error('Error:', error);
+          console.error('Error al crear el pedido:', error);
       }
-    });
+  });
+  
+  
 
     document.getElementById('buscar-pedido').addEventListener('input', (e) => {
       const pedidoId = e.target.value.trim();
