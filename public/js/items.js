@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const closeModalButton = document.querySelector('.close-button2');
+  const modal = document.getElementById('modal-editar-item');
   // Manejar la creación de items
   document.getElementById('item-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -173,4 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.querySelector('#items-table tbody');
     tbody.innerHTML = '<tr><td colspan="5">Item no encontrado</td></tr>';
   };
+    // Cerrar modal
+    closeModalButton.addEventListener('click', () => (modal.style.display = 'none'));
 });

@@ -1,224 +1,152 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Crear cliente
-  document.getElementById('cliente-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('cliente-nombre').value;
-    const email = document.getElementById('cliente-email').value;
-    const telefono = document.getElementById('cliente-telefono').value;
-    const direccion = document.getElementById('cliente-direccion').value;
+  const clienteForm = document.getElementById('cliente-form');
+  const buscarClienteInput = document.getElementById('buscar-cliente');
+  const modal = document.getElementById('modal-editar-cliente');
+  const closeModalButton = document.querySelector('.close-button');
+  const clienteTableBody = document.querySelector('#clientes-table tbody');
 
-    const response = await fetch('http://localhost:3000/clientes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, direccion }),
-    });
-    
-    if (response.ok) {
-      alert('Cliente creado con éxito');
-      cargarClientes();
-    } else {
-      alert('Error al crear el cliente');
-    }
+  // Enviar datos de un nuevo cliente al backend
+  clienteForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const clienteData = getClienteFormData();
+    await crearCliente(clienteData);
+    clienteForm.reset();
+    await cargarClientes();
   });
 
-  // Cargar clientes
-  const cargarClientes = async () => {
-    const response = await fetch('http://localhost:3000/clientes');
-    const clientes = await response.json();
-  
-    const tbody = document.querySelector('#clientes-table tbody');
-    tbody.innerHTML = '';
-  
-    clientes.forEach(cliente => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${cliente.id}</td>
-        <td>${cliente.nombre}</td>
-        <td>${cliente.email}</td>
-        <td>${cliente.telefono}</td>
-        <td>${cliente.direccion}</td>
-        <td>
-        </td>
-      `;
-      const editButton = document.createElement('button');
-      editButton.textContent = 'Editar';
-      editButton.addEventListener('click', () => editarCliente(cliente.id));
-      row.children[5].appendChild(editButton);
-  
-      // Botón Eliminar
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Eliminar';
-      deleteButton.addEventListener('click', () => eliminarCliente(cliente.id));
-      row.children[5].appendChild(deleteButton);
-      tbody.appendChild(row);
-    });
+  // Obtener datos del formulario de cliente
+  const getClienteFormData = () => ({
+    nombre: document.getElementById('cliente-nombre').value,
+    email: document.getElementById('cliente-email').value,
+    telefono: document.getElementById('cliente-telefono').value,
+    direccion: document.getElementById('cliente-direccion').value
+  });
+
+  // Crear un cliente
+  const crearCliente = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3000/clientes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      response.ok ? alert('Cliente creado con éxito') : alert('Error al crear el cliente');
+    } catch (error) {
+      console.error('Error en la creación del cliente:', error);
+    }
   };
-  
+
+  // Cargar clientes y mostrarlos en la tabla
+  const cargarClientes = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/clientes');
+      const clientes = await response.json();
+      mostrarClientes(clientes);
+    } catch (error) {
+      console.error('Error al cargar clientes:', error);
+    }
+  };
+
+  // Mostrar lista de clientes en la tabla
+  const mostrarClientes = (clientes) => {
+    clienteTableBody.innerHTML = '';
+    clientes.forEach((cliente) => clienteTableBody.appendChild(crearFilaCliente(cliente)));
+  };
+
+  // Crear fila de cliente
+  const crearFilaCliente = (cliente) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${cliente.id}</td>
+      <td>${cliente.nombre}</td>
+      <td>${cliente.email}</td>
+      <td>${cliente.telefono}</td>
+      <td>${cliente.direccion}</td>
+      <td></td>
+    `;
+    const actionsCell = row.children[5];
+    actionsCell.appendChild(crearBotonAccion('Editar', () => editarCliente(cliente.id)));
+    actionsCell.appendChild(crearBotonAccion('Eliminar', () => eliminarCliente(cliente.id)));
+    return row;
+  };
+
+  // Crear botón de acción
+  const crearBotonAccion = (texto, onClick) => {
+    const button = document.createElement('button');
+    button.textContent = texto;
+    button.addEventListener('click', onClick);
+    return button;
+  };
+
+  // Eliminar un cliente
   const eliminarCliente = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/clientes/${id}`, {
-        method: 'DELETE'
-      });
-  
-      if (response.ok) {
-        cargarClientes();
-      } else {
-        alert('Error al eliminar el cliente');
-      }
+      const response = await fetch(`http://localhost:3000/clientes/${id}`, { method: 'DELETE' });
+      if (response.ok) await cargarClientes();
+      else alert('Error al eliminar el cliente');
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al eliminar el cliente:', error);
     }
   };
-  
+
+  // Editar cliente
   const editarCliente = (id) => {
-    const nombre = prompt('Nuevo nombre:');
-    const email = prompt('Nuevo email:');
-    const telefono = prompt('Nuevo teléfono:');
-    const direccion = prompt('Nueva dirección:');
-  
-    if (nombre && email && telefono && direccion) {
-      actualizarCliente(id, { nombre, email, telefono, direccion });
-    } else {
-      alert('Todos los campos son requeridos');
-    }
+    modal.style.display = 'block';
+    document.getElementById('guardar-cambios').onclick = () => {
+      const data = getModalFormData();
+      if (data.nombre && data.email && data.telefono && data.direccion) {
+        actualizarCliente(id, data);
+        modal.style.display = 'none';
+      } else alert('Todos los campos son requeridos');
+    };
   };
-  
+
+  // Obtener datos del formulario del modal
+  const getModalFormData = () => ({
+    nombre: document.getElementById('modal-cliente-nombre').value,
+    email: document.getElementById('modal-cliente-email').value,
+    telefono: document.getElementById('modal-cliente-telefono').value,
+    direccion: document.getElementById('modal-cliente-direccion').value
+  });
+
+  // Actualizar cliente
   const actualizarCliente = async (id, data) => {
     try {
       const response = await fetch(`http://localhost:3000/clientes/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-  
-      if (response.ok) {
-        cargarClientes();
-      } else {
-        alert('Error al actualizar el cliente');
-      }
+      response.ok ? await cargarClientes() : alert('Error al actualizar el cliente');
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error al actualizar el cliente:', error);
     }
   };
 
-  cargarClientes(); // Cargar clientes al iniciar
-
-  // Función para eliminar un item
-  const eliminarItem = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:3000/items/${id}`, {
-        method: 'DELETE'
-      });
-  
-      if (response.ok) {
-        alert('Item eliminado con éxito');
-        cargarItems(); // Vuelve a cargar los items después de eliminar uno
-      } else {
-        alert('Error al eliminar el item');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  // Función para cargar items
-  const cargarItems = async () => {
-    const response = await fetch('http://localhost:3000/items');
-    const items = await response.json();
-
-    const tbody = document.querySelector('#items-table tbody');
-    tbody.innerHTML = '';
-
-    items.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.id}</td>
-        <td>${item.codigo}</td>
-        <td>${item.descripcion}</td>
-        <td>${item.precio}</td>
-        <td>${item.stock}</td>
-        <td>${item.habilitado ? 'Sí' : 'No'}</td>
-        <td>
-          <button class="editar-btn" data-id="${item.id}">Editar</button>
-          <button class="eliminar-btn" data-id="${item.id}">Eliminar</button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
-
-    // Añadir eventos a los botones de editar y eliminar
-    document.querySelectorAll('.editar-btn').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const id = e.target.getAttribute('data-id');
-        editarItem(id);
-      });
-    });
-    document.querySelectorAll('.eliminar-btn').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const id = e.target.getAttribute('data-id');
-        eliminarItem(id);
-      });
-    });
-  };
-
-  // Función para editar un item
-  const editarItem = async (id) => {
-    const codigo = prompt('Nuevo código:');
-    const descripcion = prompt('Nueva descripción:');
-    const precio = parseFloat(prompt('Nuevo precio:'));
-    const stock = parseInt(prompt('Nuevo stock:'));
-    const habilitado = confirm('¿Habilitado?');
-
-    if (codigo && descripcion && !isNaN(precio) && !isNaN(stock)) {
-      const data = { codigo, descripcion, precio, stock, habilitado };
-      
-      try {
-        const response = await fetch(`http://localhost:3000/items/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-          alert('Item actualizado con éxito');
-          cargarItems();
-        } else {
-          alert('Error al actualizar el item');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    } else {
-      alert('Todos los campos son requeridos');
-    }
-  };
-
-  // Escuchar el evento submit del formulario y llamar a cargarItems después de crear el item
-  document.getElementById('item-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const codigo = document.getElementById('item-codigo').value;
-    const descripcion = document.getElementById('item-descripcion').value;
-    const precio = parseFloat(document.getElementById('item-precio').value);
-    const stock = parseInt(document.getElementById('item-stock').value);
-    const habilitado = document.getElementById('item-habilitado').checked;
-    
-    const response = await fetch('http://localhost:3000/items', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ codigo, descripcion, precio, stock, habilitado }),
-    });
-    
-    if (response.ok) {
-      alert('Item creado con éxito');
-      cargarItems();
-    } else {
-      alert('Error al crear el item');
-    }
+  // Búsqueda de cliente
+  buscarClienteInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.trim();
+    searchTerm ? buscarClientePorId(searchTerm) : cargarClientes();
   });
 
-  // Llamar a cargarItems al cargar la página
-  cargarItems();
+  // Buscar cliente por ID
+  const buscarClientePorId = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/clientes/${id}`);
+      response.ok ? mostrarClientes([await response.json()]) : mostrarClienteNoEncontrado();
+    } catch (error) {
+      console.error('Error al buscar cliente:', error);
+    }
+  };
+
+  // Mostrar mensaje de cliente no encontrado
+  const mostrarClienteNoEncontrado = () => {
+    clienteTableBody.innerHTML = '<tr><td colspan="6">Cliente no encontrado</td></tr>';
+  };
+
+  // Cerrar modal
+  closeModalButton.addEventListener('click', () => (modal.style.display = 'none'));
+
+  // Inicializar la carga de clientes
+  cargarClientes();
 });
